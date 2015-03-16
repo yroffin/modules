@@ -18,98 +18,17 @@
 
 /* Services */
 
-var jarvisServicesUrl = '/services';
+var moduleServicesUrl = '/services';
 var myAppServices = angular.module('myApp.services', [ 'ngResource' ]);
 
-myAppServices.factory('jarvisServices', [ '$resource', function($resource, $windows) {
+myAppServices.factory('moduleServices', [ '$resource', function($resource, $windows) {
 	return $resource('', {}, {
-		getProperties : {
+		getNodes : {
 			method : 'GET',
-			url : jarvisServicesUrl + '/info/properties',
-			params : {},
-			isArray : false,
-			cache : false
-		},
-		getClients : {
-			method : 'GET',
-			url : jarvisServicesUrl + '/info/clients',
-			params : {},
-			isArray : false,
-			cache : false
-		},
-		getEvents : {
-			method : 'GET',
-			url : jarvisServicesUrl + '/info/events',
-			params : {},
-			isArray : false,
-			cache : false
-		},
-		send : {
-			method : 'GET',
-			url : jarvisServicesUrl + '/send',
-			params : {},
-			isArray : false,
-			cache : false
-		},
-		/**
-		 * retrieve mongodb collections
-		 */
-		getDbCollections : {
-			method : 'GET',
-			url : jarvisServicesUrl + '/mongodb/collections',
+			url : 'resources/nodes.json',
 			params : {},
 			isArray : true,
 			cache : false
-		},
-		/**
-		 * count collection tupple
-		 */
-		countDbCollections : {
-			method : 'GET',
-			url : jarvisServicesUrl + '/mongodb/crud/:database/:name/count',
-			params : {},
-			isArray : false,
-			cache : false
-		},
-		/**
-		 * count collection tupple
-		 */
-		getCollection : {
-			method : 'GET',
-			url : jarvisServicesUrl + '/mongodb/crud/:database/:name/page?offset=:offset&page=:page',
-			params : {},
-			isArray : true,
-			cache : false
-		},
-		/**
-		 * create a new crontab entry
-		 */
-		createJob : {
-			method : 'POST',
-			url : jarvisServicesUrl + '/mongodb/crontab/:plugin/create?job=:job&params=:params&cronTime=:cronTime',
-			params : {},
-			isArray : true,
-			cache : false
-		},
-		/**
-		 * get all crontab
-		 */
-		getJobs : {
-			method : 'GET',
-			url : jarvisServicesUrl + '/mongodb/crontabs/list',
-			params : {},
-			isArray : true,
-			cache : false
-		},
-		/**
-		 * test current selected job
-		 */
-		testJob : {
-			method : 'GET',
-			url : jarvisServicesUrl + '/mongodb/crontab/:plugin/test?job=:job',
-			params : {},
-			isArray : true,
-			cache : false
-		},
+		}
 	})
 } ]);
