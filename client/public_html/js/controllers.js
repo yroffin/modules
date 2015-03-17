@@ -18,12 +18,12 @@
 
 /* Controllers */
 
-angular.module('myApp.controllers', []).controller('BootstrapCtrl', ['$rootScope', '$window', 'moduleServices', function ($scope, $window, modulesServices) {
+angular.module('myApp.controllers', []).controller('BootstrapCtrl', ['$rootScope', '$window', 'moduleServices', 'moduleBusiness', function ($scope, $window, modulesServices, moduleBusiness) {
         /**
          * bootstrap
          */
         $scope.load = function () {
-            $scope.theme = "b";
+            $scope.theme = "a";
             $scope.inventoryItem = {
                 href: ''
             };
@@ -33,47 +33,8 @@ angular.module('myApp.controllers', []).controller('BootstrapCtrl', ['$rootScope
         /**
          * node render
          */
-        $scope.render = function (clear, s, nodes) {
-            /**
-             * clear it if requested
-             */
-            if (clear) {
-                s.clear();
-            }
- 
-            /**
-             * render all this nodes
-             */
-            nodes.forEach(function (node) {
-                console.log(node)
-                var nodeCircle = s.circle(150, 150, 100);
-                var nodeTitle = s.text(120, 150, node.id);
-                var image = s.image("resources/2363.png", 150, 150, 100, 100);
-
-                var myNode = s.group(nodeCircle, nodeTitle, image);
-
-                nodeCircle.attr({
-                    fill: "#bada55",
-                    stroke: "#000",
-                    strokeWidth: 2
-                })
-                myNode.drag();
-
-                nodeCircle.hover(
-                        function () {
-                            nodeCircle.animate({r: 120}, 100);
-                        },
-                        function () {
-                            nodeCircle.animate({r: 100}, 100);
-                        }
-                );
-            });
-        }
-
-        /**
-         * node render
-         */
         $scope.reorder = function () {
+            moduleBusiness.reorder();
             console.info("reorder");
             /*
              var t = new Snap.Matrix()
@@ -96,8 +57,20 @@ angular.module('myApp.controllers', []).controller('BootstrapCtrl', ['$rootScope
              * load nodes
              */
             modulesServices.getNodes({}, function (data) {
-                $scope.modules.nodes = data;
-                $scope.render(true, $scope.modules.blackboard, $scope.modules.nodes);
+                $scope.modules.nodes = data.nodes;
+                /**
+                 * build local index on node id
+                 */
+                $scope.modules.inodes = {};
+                data.nodes.forEach(function (node) {
+                    $scope.modules.inodes[node.id] = node;
+                });
+                $scope.modules.links = data.links;
+                /**
+                 * $scope is passed to permit callback on model
+                 */
+                $scope.context = {};
+                moduleBusiness.render($scope, true, $scope.modules.blackboard, $scope.modules.nodes, $scope.modules.inodes, $scope.modules.links);
                 /**
                  * navigate to target
                  */

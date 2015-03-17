@@ -27,7 +27,7 @@ myAppServices.factory('moduleServices', [ '$resource', function($resource, $wind
 			method : 'GET',
 			url : 'resources/nodes.json',
 			params : {},
-			isArray : true,
+			isArray : false,
 			cache : false
 		}
 	})

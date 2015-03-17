@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<html lang="en" ng-app="myApp">
+<html id="body" lang="en" ng-app="myApp">
     <head>
         <title>My AngularJS App</title>
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -63,6 +63,9 @@ limitations under the License.
             <div role="main" class="ui-content">
                 <div>
                     <h1>Clients</h1>
+                    <pre>context.id = <span ng-bind="context.id"></span></pre>
+                    <pre>context.cx = <span ng-bind="context.cx"></span></pre>
+                    <pre>context.cy = <span ng-bind="context.cy"></span></pre>
                     <svg id="snap" width="800px" height="600px"><defs></defs></svg>
                 </div>
             </div>
@@ -169,6 +172,7 @@ limitations under the License.
         <!-- Application -->
         <script src="js/app.js"></script>
         <script src="js/services.js"></script>
+        <script src="js/business.js"></script>
         <script src="js/controllers.js"></script>
         <script src="js/filters.js"></script>
         <script src="js/directives.js"></script>

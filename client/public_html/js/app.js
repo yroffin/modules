@@ -23,6 +23,7 @@ angular.module('myApp', [
   'ngResource',
   'myApp.filters',
   'myApp.services',
+  'myApp.business',
   'myApp.directives',
   'myApp.controllers'
 ]);
