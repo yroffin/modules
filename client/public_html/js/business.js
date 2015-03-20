@@ -20,75 +20,132 @@
 
 var myAppBusiness = angular.module('myApp.business', []);
 
-myAppBusiness.factory('moduleBusiness', function() {
+myAppBusiness.factory('moduleBusiness', function () {
     return {
+        /**
+         * reorder current graph
+         * @returns nothing
+         */
+        reorder: function (canvas, inodes, links) {
+            canvas.custom.updateLinks(links);
+        },
+        /**
+         * render node on current snap board, with clear option
+         * @param boolean clear
+         * @param snap s
+         * @param nodes nodes
+         * @returns nothing
+         */
+        render: function ($scope, clear, canvas, nodes, inodes, links) {
             /**
-             * reorder current graph
-             * @returns nothing
+             * clear it if requested
              */
-            reorder : function() {
-                alert(1);
-            },
-            /**
-             * render node on current snap board, with clear option
-             * @param boolean clear
-             * @param snap s
-             * @param nodes nodes
-             * @returns nothing
-             */
-            render : function ($scope, clear, paper, nodes, inodes, links) {
+            if (clear) {
+                canvas.clear();
+            }
+
+            canvas.custom = {};
+            canvas.custom.updateLinks = function(links) {
                 /**
-                 * clear it if requested
+                 * internal function
+                 * @param {type} line
+                 * @param {type} x1
+                 * @param {type} y1
+                 * @param {type} x2
+                 * @param {type} y2
+                 * @returns {undefined}
                  */
-                if (clear) {
-                    paper.clear();
+                function move(line, x1, y1, x2, y2) {
+                    line.attr({x1: x1, y1: y1});
+                    line.attr({x2: x2, y2: y2});
                 }
-
-                /**
-                 * render all this nodes
-                 */
-                nodes.forEach(function (node) {
-                    console.log(node)
-                    var nodeCircle = paper.circle(150, 150, 100);
-                    var nodeTitle = paper.text(120, 150, node.id);
-                    var image = paper.image("resources/2363.png", 150, 150, 100, 100);
-
-                    var myNode = paper.group(nodeCircle, nodeTitle, image);
-                    
-                    /**
-                     * update node reference
-                     */
-                    node.graphic = {target : nodeCircle};
-
-                    nodeCircle.attr({
-                        fill: "#bada55",
-                        stroke: "#000",
-                        strokeWidth: 2
-                    })
-                    myNode.drag();
-
-                    nodeCircle.hover(
-                            function () {
-                                nodeCircle.animate({r: 120}, 100);
-                                $scope.context.id = node.id;
-                                $scope.context.cx = nodeCircle.getBBox().cx;
-                                $scope.context.cy = nodeCircle.getBBox().cy;
-                                $scope.$apply()
-                            },
-                            function () {
-                                nodeCircle.animate({r: 100}, 100);
-                            }
-                    );
-                });
 
                 /**
                  * render all this links
                  */
                 links.forEach(function (link) {
-                    var lnode = inodes[link.left];
-                    var rnode = inodes[link.right];
-                    console.log(lnode.graphic.target.getBBox());
+                    var x1 = inodes[link.x1];
+                    var x2 = inodes[link.x2];
+                    var box1 = x1.graphic.target.getBBox();
+                    var box2 = x2.graphic.target.getBBox();
+                    move(link.graphic.target, box1.x, box1.y, box2.x, box2.y);
                 });
             }
+            
+            /**
+             * render all this nodes
+             */
+            nodes.forEach(function (node) {
+                console.log(node)
+                var nodeCircle = canvas.circle(150, 150, 100);
+                var nodeTitle = canvas.text(120, 150, node.id);
+                var image = canvas.image("resources/2363.png", 150, 150, 100, 100);
+
+                var myNode = canvas.group(nodeCircle, nodeTitle, image);
+
+                /**
+                 * update node reference
+                 */
+                node.graphic = {target: myNode};
+
+                nodeCircle.attr({
+                    fill: "#bada55",
+                    stroke: "#000",
+                    strokeWidth: 2
+                })
+
+                nodeCircle.hover(
+                        function () {
+                            nodeCircle.animate({r: 120}, 100);
+                            $scope.context.id = node.id;
+                            $scope.context.cx = nodeCircle.getBBox().cx;
+                            $scope.context.cy = nodeCircle.getBBox().cy;
+                            $scope.$apply()
+                        },
+                        function () {
+                            nodeCircle.animate({r: 100}, 100);
+                        }
+                );
+            });
+
+            /**
+             * render all this links
+             */
+            links.forEach(function (link) {
+                /**
+                 * retrieve boxes area
+                 */
+                var box1 = inodes[link.x1].graphic.target.getBBox();
+                var box2 = inodes[link.x2].graphic.target.getBBox();
+                var association = canvas.line(box1.x, box1.y, box2.x, box2.y);
+                association.attr({
+                    stroke: "#000",
+                    strokeWidth: 2
+                })
+                link.graphic = {target: association};
+            });
+
+            /**
+             * each node have default drag option
+             */
+            nodes.forEach(function (node) {
+                /**
+                 * apply drag on each groups
+                 */
+                node.graphic.target.drag();
+                /**
+                 * and fire some event while moving this group
+                 */
+                eve.on('snap.drag.end.' + node.graphic.target.id, function() {
+                    canvas.custom.updateLinks(links);
+                });
+                eve.on('snap.drag.move.' + node.graphic.target.id, function() {
+                    canvas.custom.updateLinks(links);
+                });
+                eve.on('snap.drag.start.' + node.graphic.target.id, function() {
+                    canvas.custom.updateLinks(links);
+                });
+            });
+        }
     };
 });

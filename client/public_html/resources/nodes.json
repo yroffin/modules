@@ -5,24 +5,21 @@
         "attr" : {
             "type" : "server",
             "name" : "node#1"
-        },
-        "links": [{"id":"node#2"}]
+        }
     },
     {
         "id" : "node#2",
         "attr" : {
             "type" : "server",
             "name" : "node#2"
-        },
-        "links": [{"id":"node#1"}]
+        }
     },
     {
         "id" : "node#3",
         "attr" : {
             "type" : "server",
             "name" : "node#3"
-        },
-        "links": [{"id":"node#1"},{"id":"node#2"}]
+        }
     }
     ],
     "links" : [
@@ -32,8 +29,8 @@
                 "type" : "stream",
                 "name" : "link#1"
             },
-            "left": "node#1",
-            "right": "node#2"
+            "x1": "node#1",
+            "x2": "node#2"
         }
     ]
 }

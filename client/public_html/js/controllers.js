@@ -34,8 +34,7 @@ angular.module('myApp.controllers', []).controller('BootstrapCtrl', ['$rootScope
          * node render
          */
         $scope.reorder = function () {
-            moduleBusiness.reorder();
-            console.info("reorder");
+            moduleBusiness.reorder($scope.modules.blackboard, $scope.modules.inodes, $scope.modules.links);
             /*
              var t = new Snap.Matrix()
              t.translate(100, 100);
